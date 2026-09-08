@@ -37,11 +37,16 @@ export function middleware(request: NextRequest) {
       .get("authorization")
       ?.replace(/^Bearer\s+/i, "");
 
-  // Allow same-origin browser requests.
-  const origin = request.headers.get("origin");
   const host = request.headers.get("host");
 
+  // ---------------------------------------------------------
+  // Same-origin browser request detection
+  // ---------------------------------------------------------
+
   let isSameOrigin = false;
+
+  // First choice: Origin header
+  const origin = request.headers.get("origin");
 
   if (origin && host) {
     try {
@@ -51,11 +56,28 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // Fallback: Referer header
+  // Some browser GET requests don't send Origin.
+  if (!isSameOrigin) {
+    const referer = request.headers.get("referer");
+
+    if (referer && host) {
+      try {
+        isSameOrigin = new URL(referer).host === host;
+      } catch {
+        isSameOrigin = false;
+      }
+    }
+  }
+
   if (isSameOrigin) {
     return NextResponse.next();
   }
 
-  // External requests must authenticate.
+  // ---------------------------------------------------------
+  // External requests must authenticate
+  // ---------------------------------------------------------
+
   if (providedKey !== expectedKey) {
     return NextResponse.json(
       { error: "Unauthorized" },

@@ -1,20 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 
 /**
- * Minimal auth for a single-user / small-team deployment: every request to
- * /api/* must carry a header matching APP_API_KEY (set in your env).
+ * API protection for Creator Product Intelligence.
  *
- * This is intentionally simple — there's no per-user ownership check here
- * because the schema has no `ownerId` column yet. If you add multi-user
- * support later, add an `ownerId` to the `creators` table and check
- * `creator.ownerId === session.userId` inside each route handler in
- * addition to this key check.
+ * - Same-origin browser requests are allowed.
+ * - External API requests must provide APP_API_KEY.
+ * - /api/config is public because it is used by the frontend during startup.
+ *
+ * This avoids exposing APP_API_KEY in client-side JavaScript.
  */
 export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  // Config is safe to expose to the frontend.
+  if (pathname === "/api/config") {
+    return NextResponse.next();
+  }
+
   const expectedKey = process.env.APP_API_KEY;
 
-  // If no key is configured, fail closed in production but allow local dev
-  // to run without extra setup.
+  // Fail closed in production if API key isn't configured.
   if (!expectedKey) {
     if (process.env.NODE_ENV === "production") {
       return NextResponse.json(
@@ -22,15 +27,40 @@ export function middleware(request: NextRequest) {
         { status: 500 }
       );
     }
+
     return NextResponse.next();
   }
 
   const providedKey =
     request.headers.get("x-api-key") ??
-    request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+    request.headers
+      .get("authorization")
+      ?.replace(/^Bearer\s+/i, "");
 
+  // Allow same-origin browser requests.
+  const origin = request.headers.get("origin");
+  const host = request.headers.get("host");
+
+  let isSameOrigin = false;
+
+  if (origin && host) {
+    try {
+      isSameOrigin = new URL(origin).host === host;
+    } catch {
+      isSameOrigin = false;
+    }
+  }
+
+  if (isSameOrigin) {
+    return NextResponse.next();
+  }
+
+  // External requests must authenticate.
   if (providedKey !== expectedKey) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
   }
 
   return NextResponse.next();

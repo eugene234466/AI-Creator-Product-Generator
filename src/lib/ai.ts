@@ -22,64 +22,53 @@ function getModel(): string {
 // ============================================================
 
 const SAFETY_INSTRUCTIONS = `
-IMPORTANT EVIDENCE AND CLAIM RULES:
+EVIDENCE AND CLAIM INTEGRITY RULES:
 
 1. Never claim that a creator personally authored, endorsed, approved,
    collaborated on, licensed, or currently sells a product unless the
-   provided evidence explicitly confirms it.
+   supplied evidence explicitly confirms it.
 
-2. Never describe a proposed product as:
-   - creator-authored
-   - official
-   - insider
-   - proprietary
-   - first-hand
-   - endorsed
-   - creator-approved
+2. Never describe a proposed product as "official", "insider",
+   "proprietary", "first-hand", "creator-authored", or "endorsed"
+   unless the evidence explicitly supports the claim.
 
-   unless the provided evidence explicitly supports that claim.
-
-3. Never invent:
-   - financial figures
-   - revenue
-   - subscriber counts
-   - audience behavior
-   - customer demand
-   - audience comments
-   - business relationships
-   - partnerships
-   - creator statements
+3. Never invent financial figures, revenue, subscriber counts,
+   audience behavior, comments, testimonials, partnerships, or
+   business relationships.
 
 4. Distinguish between:
-   - VERIFIED: directly supported by provided evidence
-   - INFERRED: a reasonable conclusion from multiple evidence signals
-   - HYPOTHESIS: a plausible opportunity that still requires validation
+   VERIFIED:
+   Directly supported by supplied evidence.
 
-5. When proposing a product for a creator, describe it as a:
-   - proposed product
-   - product opportunity
-   - collaboration concept
-   - potential product
+   INFERRED:
+   A reasonable conclusion based on multiple evidence signals.
 
-6. The creator's name, likeness, trademarks, branding, content,
-   proprietary methods, and implied endorsement must not be treated
-   as automatically available for commercial use.
+   HYPOTHESIS:
+   A plausible opportunity that requires validation.
 
-7. Do not write copy that implies the creator has approved the product.
+5. Proposed products must be described as proposed products,
+   product opportunities, or potential collaboration concepts.
 
-8. If evidence is insufficient, explicitly state that validation is required.
+6. Never assume that the creator's name, likeness, trademarks,
+   branding, content, proprietary methods, or endorsement can be
+   commercially used without permission.
 
-9. Never fabricate audience comments, testimonials, buying intent,
-   search demand, or customer requests.
+7. Never imply that the creator has approved a product.
 
-10. Never turn an assumption into a factual statement simply because
+8. If evidence is insufficient, say that validation is required.
+
+9. Never fabricate audience comments or buying-intent signals.
+
+10. Never turn an assumption into a factual statement merely because
     it makes the report sound more persuasive.
 
-11. Prefer evidence-grounded and commercially realistic language over
-    impressive-sounding claims.
+11. Avoid guaranteed claims about revenue, virality, growth,
+    subscribers, or business outcomes.
 
-12. The product must remain commercially understandable and useful
-    even if the creator never participates in the project.
+12. Prefer accurate, evidence-grounded language over hype.
+
+13. The proposed product should remain useful even if the creator
+    never participates.
 `;
 
 // ============================================================
@@ -99,6 +88,10 @@ export type CreatorInput = {
 
 export type CreatorAnalysis = {
   summary: string;
+  mainNiche: string;
+  subNiches: string[];
+  recurringTopics: string[];
+  promisingTopics: string[];
   contentThemes: string[];
   audienceProblems: string[];
   buyingSignals: string[];
@@ -164,6 +157,10 @@ export type OutreachDraft = {
 
 const CreatorAnalysisSchema = z.object({
   summary: z.string(),
+  mainNiche: z.string(),
+  subNiches: z.array(z.string()),
+  recurringTopics: z.array(z.string()),
+  promisingTopics: z.array(z.string()),
   contentThemes: z.array(z.string()),
   audienceProblems: z.array(z.string()),
   buyingSignals: z.array(z.string()),
@@ -219,15 +216,26 @@ const BrandingBriefSchema = z.object({
   ctaStyle: z.string(),
 });
 
+const OutreachDraftSchema = z.object({
+  channel: z.enum(["email", "twitter_dm", "instagram_dm"]),
+  tone: z.enum(["professional", "enthusiastic", "casual"]),
+  subject: z.string().optional(),
+  body: z.string(),
+});
+
 const OutreachSchema = z.object({
-  drafts: z.array(
-    z.object({
-      channel: z.enum(["email", "twitter_dm", "instagram_dm"]),
-      tone: z.enum(["professional", "enthusiastic", "casual"]),
-      subject: z.string().optional(),
-      body: z.string(),
-    })
-  ),
+  drafts: z.array(OutreachDraftSchema),
+});
+
+const AuditSchema = z.object({
+  passed: z.boolean(),
+  issues: z.array(z.string()),
+  corrected: z.object({
+    product: ProductRecommendationSchema,
+    workbook: WorkbookSchema,
+    branding: BrandingBriefSchema,
+    outreach: z.array(OutreachDraftSchema),
+  }),
 });
 
 // ============================================================
@@ -292,6 +300,28 @@ function parseJson<T>(text: string, schema: z.ZodSchema<T>): T {
 }
 
 // ============================================================
+// EVIDENCE FORMATTER
+// ============================================================
+
+function formatEvidence(evidence: EvidenceItem[]): string {
+  if (!evidence.length) {
+    return "No external evidence was found.";
+  }
+
+  return evidence
+    .map(
+      (item, index) => `
+[Evidence ${index + 1}]
+Type: ${item.type}
+Source: ${item.source}
+Title: ${item.title}
+Content: ${item.content}
+`
+    )
+    .join("\n");
+}
+
+// ============================================================
 // 1. CREATOR ANALYSIS
 // ============================================================
 
@@ -300,40 +330,40 @@ export async function analyzeCreatorContent(
 ): Promise<CreatorAnalysis> {
   const evidence = await gatherEvidence(creator);
 
-  const evidenceText = evidence
-    .map(
-      (item, index) =>
-        `[Evidence ${index + 1}]
-Type: ${item.type}
-Source: ${item.source}
-Title: ${item.title}
-Content: ${item.content}`
-    )
-    .join("\n\n");
-
   const system = `
 You are a creator intelligence analyst.
 
-Analyze the creator using ONLY the information provided.
+Analyze the creator using the supplied creator information and
+external evidence.
 
 Identify:
-1. The creator's major content themes.
-2. Realistic audience problems.
-3. Buying-intent signals.
-4. A concise creator summary.
 
-Every problem and buying signal must be grounded in the supplied
-evidence or clearly marked as an inference.
+1. Main niche.
+2. Sub-niches.
+3. Recurring topics.
+4. Promising topics.
+5. Major content themes.
+6. Audience problems.
+7. Buying-intent signals.
+8. A concise creator summary.
 
-Do not invent audience comments.
+IMPORTANT:
 
-Do not assume that a creator's audience wants a product simply because
-the product would be commercially attractive.
+Audience problems and buying signals must be grounded in evidence.
 
-Return JSON with exactly:
+If something is inferred rather than directly observed, phrase it as
+an inference rather than a fact.
+
+Do not fabricate comments, requests, testimonials, or demand.
+
+Return JSON:
 
 {
   "summary": "...",
+  "mainNiche": "...",
+  "subNiches": ["..."],
+  "recurringTopics": ["..."],
+  "promisingTopics": ["..."],
   "contentThemes": ["..."],
   "audienceProblems": ["..."],
   "buyingSignals": ["..."]
@@ -345,10 +375,18 @@ CREATOR
 
 Name: ${creator.name}
 Niche: ${creator.niche}
-Instagram: ${creator.instagramUrl ?? "Not provided"}
-TikTok: ${creator.tiktokUrl ?? "Not provided"}
-YouTube: ${creator.youtubeUrl ?? "Not provided"}
-Description: ${creator.description ?? "Not provided"}
+
+Instagram:
+${creator.instagramUrl ?? "Not provided"}
+
+TikTok:
+${creator.tiktokUrl ?? "Not provided"}
+
+YouTube:
+${creator.youtubeUrl ?? "Not provided"}
+
+Description:
+${creator.description ?? "Not provided"}
 
 Audience information:
 ${creator.audienceInfo ?? "Not provided"}
@@ -356,12 +394,13 @@ ${creator.audienceInfo ?? "Not provided"}
 Manual posts:
 ${creator.manualPosts ?? "Not provided"}
 
-EVIDENCE
+EXTERNAL EVIDENCE
 
-${evidenceText || "No external evidence was found."}
+${formatEvidence(evidence)}
 `;
 
   const text = await rawChat(system, user);
+
   const result = parseJson(text, CreatorAnalysisSchema);
 
   return {
@@ -378,40 +417,51 @@ export async function discoverOpportunities(
   creator: CreatorInput,
   analysis: CreatorAnalysis
 ): Promise<Opportunity[]> {
-  const evidenceText = analysis.evidence
-    .map(
-      (item, index) =>
-        `[Evidence ${index + 1}]
-Type: ${item.type}
-Source: ${item.source}
-Title: ${item.title}
-Content: ${item.content}`
-    )
-    .join("\n\n");
-
   const system = `
 You are a digital product opportunity strategist.
 
-Generate 4 commercially realistic product opportunities based on the
-creator's content, audience problems, buying signals, and evidence.
+Generate exactly 4 commercially realistic digital product
+opportunities.
 
-Do not create products merely because they match the creator's name.
+Each opportunity must connect:
 
-Each opportunity must solve a specific customer problem.
+Creator content
+        +
+Audience problem
+        +
+Buying signal
+        +
+Evidence
+        =
+Product opportunity
 
 The creator has NOT agreed to these products.
 
-These are proposed opportunities only.
+Do not manufacture:
+- creator endorsement
+- creator authorship
+- insider access
+- proprietary frameworks
+- audience demand
+- financial claims
 
-Avoid:
-- fake creator endorsement
-- fake insider access
-- fake proprietary frameworks
-- unsupported audience demand
-- unsupported financial claims
-- promises of guaranteed growth or revenue
+The opportunity should solve a specific customer problem.
 
-For each opportunity explain WHY the evidence supports it.
+For each opportunity provide:
+- product concept
+- format
+- realistic price range
+- implementation difficulty
+- overall opportunity score
+- creator fit
+- rationale
+- target customer
+- problem
+- transformation
+- evidence supporting the opportunity
+
+The score represents opportunity quality, not guaranteed business
+performance.
 
 Return JSON:
 
@@ -419,7 +469,7 @@ Return JSON:
   "opportunities": [
     {
       "title": "...",
-      "format": "workbook",
+      "format": "...",
       "priceRange": "$X-$Y",
       "difficulty": "easy",
       "overallScore": 0,
@@ -428,26 +478,37 @@ Return JSON:
       "targetCustomer": "...",
       "problem": "...",
       "transformation": "...",
-      "evidenceBasis": ["Evidence 1", "Evidence 2"]
+      "evidenceBasis": ["..."]
     }
   ]
 }
-
-Allowed formats include:
-workbook, guide, template, action plan, checklist, calculator,
-course outline, toolkit, swipe file, planner.
 `;
 
   const user = `
 CREATOR
 
-Name: ${creator.name}
-Niche: ${creator.niche}
+Name:
+${creator.name}
+
+Niche:
+${creator.niche}
 
 ANALYSIS
 
 Summary:
 ${analysis.summary}
+
+Main niche:
+${analysis.mainNiche}
+
+Sub-niches:
+${analysis.subNiches.join("\n- ")}
+
+Recurring topics:
+${analysis.recurringTopics.join("\n- ")}
+
+Promising topics:
+${analysis.promisingTopics.join("\n- ")}
 
 Content themes:
 ${analysis.contentThemes.join("\n- ")}
@@ -460,10 +521,11 @@ ${analysis.buyingSignals.join("\n- ")}
 
 EVIDENCE
 
-${evidenceText || "No evidence available."}
+${formatEvidence(analysis.evidence)}
 `;
 
   const text = await rawChat(system, user);
+
   const result = parseJson(text, OpportunitiesSchema);
 
   return result.opportunities;
@@ -483,33 +545,33 @@ You are a digital product strategist.
 
 Turn the selected opportunity into a concrete product recommendation.
 
-IMPORTANT:
-
-This is a proposed product.
+This is a PROPOSED PRODUCT.
 
 The creator has NOT endorsed, authored, approved, licensed, or
-collaborated on it unless the evidence explicitly says otherwise.
+collaborated on this product unless the evidence explicitly confirms
+otherwise.
 
 The product must stand on its own without creator participation.
 
-Do not describe it as:
+Do not describe the product as:
+
 - official
-- creator-authored
 - insider
 - proprietary
 - first-hand
+- creator-authored
 - endorsed
 
 Do not imply that the creator personally developed the methodology.
 
-Instead, use language such as:
-- inspired by observable content patterns
-- based on publicly observable strategies
-- proposed collaboration opportunity
-- potential product concept
+Instead, position it around:
+- observable content patterns
+- transferable strategies
+- audience problems
+- practical workflows
+- customer transformation
 
-The unique angle must describe the product's genuine differentiation,
-not imaginary creator access.
+The unique angle must describe a genuine product differentiation.
 
 Return JSON:
 
@@ -521,15 +583,18 @@ Return JSON:
   "problem": "...",
   "transformation": "...",
   "uniqueAngle": "...",
-  "contents": ["...", "..."]
+  "contents": ["..."]
 }
 `;
 
   const user = `
 CREATOR
 
-Name: ${creator.name}
-Niche: ${creator.niche}
+Name:
+${creator.name}
+
+Niche:
+${creator.niche}
 
 ANALYSIS
 
@@ -541,18 +606,28 @@ ${analysis.contentThemes.join("\n- ")}
 Audience problems:
 ${analysis.audienceProblems.join("\n- ")}
 
-BUYING SIGNALS
-
+Buying signals:
 ${analysis.buyingSignals.join("\n- ")}
 
 SELECTED OPPORTUNITY
 
-Title: ${opportunity.title}
-Format: ${opportunity.format}
-Price range: ${opportunity.priceRange}
-Difficulty: ${opportunity.difficulty}
-Score: ${opportunity.overallScore}
-Creator fit: ${opportunity.creatorFit}
+Title:
+${opportunity.title}
+
+Format:
+${opportunity.format}
+
+Price range:
+${opportunity.priceRange}
+
+Difficulty:
+${opportunity.difficulty}
+
+Overall score:
+${opportunity.overallScore}
+
+Creator fit:
+${opportunity.creatorFit}
 
 Rationale:
 ${opportunity.rationale}
@@ -566,11 +641,12 @@ ${opportunity.problem}
 Transformation:
 ${opportunity.transformation}
 
-Evidence basis:
+Evidence:
 ${opportunity.evidenceBasis.join("\n- ")}
 `;
 
   const text = await rawChat(system, user);
+
   return parseJson(text, ProductRecommendationSchema);
 }
 
@@ -587,19 +663,27 @@ You are an expert educational product designer.
 
 Create a practical workbook for the proposed digital product.
 
-The workbook should:
-- teach a transferable process
-- contain practical exercises
-- contain useful templates
-- avoid unsupported claims
-- avoid pretending the creator authored it
-- avoid implying endorsement
-- avoid promising guaranteed results
+The workbook should contain:
 
-If the creator's name is used in the product title, treat it as a
-proposed collaboration/branding concept rather than an approved product.
+- clear lessons
+- practical exercises
+- useful templates
+- checklists
+- implementation steps
 
-The workbook should remain useful if the creator never participates.
+Do not:
+- invent creator quotes
+- claim creator authorship
+- claim official status
+- imply endorsement
+- imply insider access
+- make unsupported financial claims
+- promise guaranteed results
+
+The material should teach transferable principles.
+
+If the creator's name is included, it must be treated as a proposed
+branding/collaboration concept rather than an approved product.
 
 Return JSON:
 
@@ -621,23 +705,38 @@ Return JSON:
   const user = `
 CREATOR
 
-Name: ${creator.name}
-Niche: ${creator.niche}
+Name:
+${creator.name}
+
+Niche:
+${creator.niche}
 
 PRODUCT
 
-Name: ${product.productName}
-Type: ${product.type}
-Target audience: ${product.targetAudience}
-Problem: ${product.problem}
-Transformation: ${product.transformation}
-Unique angle: ${product.uniqueAngle}
+Name:
+${product.productName}
+
+Type:
+${product.type}
+
+Target audience:
+${product.targetAudience}
+
+Problem:
+${product.problem}
+
+Transformation:
+${product.transformation}
+
+Unique angle:
+${product.uniqueAngle}
 
 Contents:
 ${product.contents.join("\n- ")}
 `;
 
   const text = await rawChat(system, user);
+
   return parseJson(text, WorkbookSchema);
 }
 
@@ -655,16 +754,20 @@ You are a brand strategist.
 Create a branding brief for the proposed product.
 
 Do not imply:
+
 - creator endorsement
 - creator authorship
 - official affiliation
 - insider access
 - proprietary creator knowledge
+- existing partnership
 
 Position the product around the customer's desired transformation.
 
-If the creator's branding is potentially relevant, describe it as a
-possible future collaboration or licensed branding opportunity.
+If creator branding is potentially relevant, describe it as a possible
+future collaboration or licensed branding opportunity.
+
+The branding should remain valid even without creator participation.
 
 Return JSON:
 
@@ -679,20 +782,35 @@ Return JSON:
   const user = `
 CREATOR
 
-Name: ${creator.name}
-Niche: ${creator.niche}
+Name:
+${creator.name}
+
+Niche:
+${creator.niche}
 
 PRODUCT
 
-Name: ${product.productName}
-Type: ${product.type}
-Target audience: ${product.targetAudience}
-Problem: ${product.problem}
-Transformation: ${product.transformation}
-Unique angle: ${product.uniqueAngle}
+Name:
+${product.productName}
+
+Type:
+${product.type}
+
+Target audience:
+${product.targetAudience}
+
+Problem:
+${product.problem}
+
+Transformation:
+${product.transformation}
+
+Unique angle:
+${product.uniqueAngle}
 `;
 
   const text = await rawChat(system, user);
+
   return parseJson(text, BrandingBriefSchema);
 }
 
@@ -713,26 +831,32 @@ Adapt the workbook to the supplied branding brief.
 
 Maintain factual integrity.
 
-Do NOT:
-- add creator endorsements
-- invent creator quotes
-- invent creator experiences
-- claim creator authorship
-- claim official status
-- claim insider access
-- introduce unsupported financial claims
+Do NOT add:
 
-The creator's public content may influence examples and tone, but do
-not pretend that the creator personally authored the material.
+- creator endorsements
+- invented creator quotes
+- invented creator experiences
+- creator authorship
+- official status
+- insider access
+- proprietary claims
+- unsupported financial claims
 
-Return JSON using the same workbook structure.
+The creator's public content may influence examples and tone.
+
+Do not pretend that the creator personally authored the material.
+
+Return JSON using exactly the same workbook structure.
 `;
 
   const user = `
 CREATOR
 
-Name: ${creator.name}
-Niche: ${creator.niche}
+Name:
+${creator.name}
+
+Niche:
+${creator.niche}
 
 PRODUCT
 
@@ -748,6 +872,7 @@ ${JSON.stringify(branding, null, 2)}
 `;
 
   const text = await rawChat(system, user);
+
   return parseJson(text, WorkbookSchema);
 }
 
@@ -761,40 +886,42 @@ export async function generateOutreachDrafts(
   branding: BrandingBrief
 ): Promise<OutreachDraft[]> {
   const system = `
-You are an expert partnership outreach strategist.
+You are an expert creator partnership outreach strategist.
 
-Create outreach drafts proposing a potential collaboration around the
-product.
+Create 9 outreach drafts proposing a potential collaboration.
 
-The outreach must be honest.
+Generate:
+
+3 professional emails
+3 enthusiastic Twitter/X DMs
+3 casual Instagram DMs
+
+The drafts must use genuinely different strategies.
+
+Possible strategies:
+
+1. Audience-problem angle
+2. Research/prototype-first angle
+3. Collaboration/revenue-share angle
+
+IMPORTANT:
 
 Never claim:
-- the creator's audience has explicitly requested the product unless
-  evidence confirms it
+
 - the creator has endorsed the product
-- the creator has authored the product
-- the creator has proprietary involvement
+- the creator authored the product
+- the creator already approved the concept
 - the product is official
-- the creator has already agreed to a revenue share
+- a partnership already exists
+- the creator's audience definitely wants the product
+- the creator has proprietary involvement
 
-The message should ask whether the creator/team would be interested
-in discussing the concept.
+Do not fabricate audience comments.
 
-Do not pretend the sender already has a partnership.
+Instead, invite the creator/team to evaluate the opportunity.
 
-Generate 9 drafts:
-- 3 professional emails
-- 3 enthusiastic Twitter/X DMs
-- 3 casual Instagram DMs
-
-Each draft should have a genuinely different angle.
-
-Possible angles:
-- audience problem
-- prototype/research-first
-- collaboration/revenue-share
-
-Avoid repeating the same pitch with different wording.
+The outreach should sound confident without pretending that a
+relationship already exists.
 
 Return JSON:
 
@@ -813,31 +940,46 @@ Return JSON:
   const user = `
 CREATOR
 
-Name: ${creator.name}
-Niche: ${creator.niche}
+Name:
+${creator.name}
+
+Niche:
+${creator.niche}
 
 PROPOSED PRODUCT
 
-Name: ${product.productName}
-Type: ${product.type}
-Target audience: ${product.targetAudience}
-Problem: ${product.problem}
-Transformation: ${product.transformation}
-Unique angle: ${product.uniqueAngle}
+Name:
+${product.productName}
 
-Branding:
+Type:
+${product.type}
+
+Target audience:
+${product.targetAudience}
+
+Problem:
+${product.problem}
+
+Transformation:
+${product.transformation}
+
+Unique angle:
+${product.uniqueAngle}
+
+BRANDING
 
 ${JSON.stringify(branding, null, 2)}
 `;
 
   const text = await rawChat(system, user);
+
   const result = parseJson(text, OutreachSchema);
 
   return result.drafts;
 }
 
 // ============================================================
-// 8. CLAIM AUDITOR
+// 8. FINAL CLAIM AUDITOR
 // ============================================================
 
 export async function auditGeneratedContent(input: {
@@ -862,30 +1004,25 @@ export async function auditGeneratedContent(input: {
 You are the final fact-checking and claim-integrity auditor for a
 creator intelligence platform.
 
-Review the generated content against the creator information and
-evidence.
+Review the generated product, workbook, branding, and outreach.
 
-Look specifically for:
+Look for:
 
-1. Claims of creator endorsement.
-2. Claims of creator authorship.
-3. Claims of official affiliation.
-4. Claims of insider access.
-5. Claims of proprietary methodology.
+1. Creator endorsement claims.
+2. Creator authorship claims.
+3. Official affiliation claims.
+4. Insider-access claims.
+5. Proprietary methodology claims.
 6. Unsupported financial claims.
 7. Unsupported audience-demand claims.
-8. Fabricated comments or testimonials.
-9. Implied partnerships that do not exist.
-10. Guarantees of growth, revenue, virality, or business results.
-11. Unauthorized assumptions about creator intellectual property.
-12. Language that presents a hypothesis as an established fact.
+8. Fabricated comments.
+9. Fabricated testimonials.
+10. Implied partnerships.
+11. Guaranteed revenue or growth.
+12. Unauthorized intellectual-property assumptions.
+13. Speculation presented as fact.
 
-You MUST correct violations.
-
-Do not merely report them.
-
-Rewrite problematic language into accurate, commercially useful
-language.
+You MUST correct every problematic claim.
 
 Examples:
 
@@ -913,11 +1050,19 @@ BAD:
 "Your $100M+ empire"
 
 GOOD:
-"Your highly successful creator business"
+"Your highly successful creator business."
+
+BAD:
+"Your proprietary challenge framework"
+
+GOOD:
+"Patterns observable in your public challenge content."
 
 The creator has NOT agreed to the product.
 
-Return JSON:
+Correct the content while preserving its commercial usefulness.
+
+Return:
 
 {
   "passed": true,
@@ -962,24 +1107,6 @@ ${JSON.stringify(input.outreach, null, 2)}
 `;
 
   const text = await rawChat(system, user);
-
-  const AuditSchema = z.object({
-    passed: z.boolean(),
-    issues: z.array(z.string()),
-    corrected: z.object({
-      product: ProductRecommendationSchema,
-      workbook: WorkbookSchema,
-      branding: BrandingBriefSchema,
-      outreach: z.array(
-        z.object({
-          channel: z.enum(["email", "twitter_dm", "instagram_dm"]),
-          tone: z.enum(["professional", "enthusiastic", "casual"]),
-          subject: z.string().optional(),
-          body: z.string(),
-        })
-      ),
-    }),
-  });
 
   return parseJson(text, AuditSchema);
 }

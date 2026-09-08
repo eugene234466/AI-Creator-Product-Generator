@@ -5,11 +5,24 @@
   --bg-card: #111318;
   --bg-elevated: #1a1d26;
   --bg-border: #252936;
+
   --accent: #6366f1;
+  --accent-hover: #818cf8;
   --accent-glow: rgba(99, 102, 241, 0.15);
+  --accent-glow-strong: rgba(99, 102, 241, 0.25);
+
   --text-primary: #f1f2f6;
   --text-secondary: #8b8fa8;
   --text-muted: #4a4f6a;
+
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
 }
 
 * {
@@ -18,50 +31,397 @@
   padding: 0;
 }
 
-html,
+html {
+  background: var(--bg-base);
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
 body {
-  background-color: var(--bg-base);
+  background:
+    radial-gradient(
+      circle at 50% -20%,
+      rgba(99, 102, 241, 0.08),
+      transparent 35%
+    ),
+    var(--bg-base);
+
   color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Inter",
+    sans-serif;
+
   font-size: 15px;
   line-height: 1.6;
   min-height: 100vh;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar */
+/* ---------------------------------------------------------
+   Selection
+--------------------------------------------------------- */
+
+::selection {
+  background: rgba(99, 102, 241, 0.35);
+  color: #fff;
+}
+
+/* ---------------------------------------------------------
+   Links
+--------------------------------------------------------- */
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a,
+button,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------------------------------------------------------
+   Buttons
+--------------------------------------------------------- */
+
+button {
+  font: inherit;
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* ---------------------------------------------------------
+   Form controls
+--------------------------------------------------------- */
+
+input,
+textarea,
+select {
+  color: var(--text-primary);
+  background-color: var(--bg-card);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------
+   Scrollbar
+--------------------------------------------------------- */
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--bg-base);
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--bg-border);
-  border-radius: 3px;
+  border-radius: 999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #374166;
 }
 
-/* Score ring animation */
-@keyframes scoreRing {
-  from { stroke-dashoffset: 283; }
+/* Firefox */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-border) var(--bg-base);
 }
 
-/* Pulse loader */
+/* ---------------------------------------------------------
+   Selection / Text utilities
+--------------------------------------------------------- */
+
+.text-gradient {
+  background: linear-gradient(
+    135deg,
+    #f1f2f6 0%,
+    #a5b4fc 50%,
+    #6366f1 100%
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------------------------------------------------------
+   Glass cards
+--------------------------------------------------------- */
+
+.glass {
+  background: rgba(17, 19, 24, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.glass-elevated {
+  background: rgba(26, 29, 38, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* ---------------------------------------------------------
+   Card glow
+--------------------------------------------------------- */
+
+.card-glow {
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.card-glow:hover {
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(99, 102, 241, 0.05),
+    0 12px 40px rgba(0, 0, 0, 0.25),
+    0 0 30px var(--accent-glow);
+}
+
+/* ---------------------------------------------------------
+   Accent glow
+--------------------------------------------------------- */
+
+.accent-glow {
+  box-shadow:
+    0 0 20px var(--accent-glow),
+    0 0 60px rgba(99, 102, 241, 0.05);
+}
+
+.accent-glow-strong {
+  box-shadow:
+    0 0 25px var(--accent-glow-strong),
+    0 0 80px rgba(99, 102, 241, 0.08);
+}
+
+/* ---------------------------------------------------------
+   Score ring animation
+--------------------------------------------------------- */
+
+@keyframes scoreRing {
+  from {
+    stroke-dashoffset: 283;
+  }
+}
+
+.score-ring {
+  animation: scoreRing 1.2s ease-out forwards;
+}
+
+/* ---------------------------------------------------------
+   Pulse loader
+--------------------------------------------------------- */
+
 @keyframes pulse-slow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }
 
 .animate-pulse-slow {
-  animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation:
+    pulse-slow
+    2s cubic-bezier(0.4, 0, 0.6, 1)
+    infinite;
 }
 
-/* Workbook print styles */
+/* ---------------------------------------------------------
+   Fade / slide animations
+--------------------------------------------------------- */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 350ms ease-out both;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 450ms ease-out both;
+}
+
+/* ---------------------------------------------------------
+   Loading shimmer
+--------------------------------------------------------- */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-card) 25%,
+    var(--bg-elevated) 50%,
+    var(--bg-card) 75%
+  );
+
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite;
+}
+
+/* ---------------------------------------------------------
+   Subtle grid background
+--------------------------------------------------------- */
+
+.grid-background {
+  background-image:
+    linear-gradient(
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    );
+
+  background-size: 32px 32px;
+}
+
+/* ---------------------------------------------------------
+   Status indicators
+--------------------------------------------------------- */
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot-success {
+  background: var(--success);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.45);
+}
+
+.status-dot-warning {
+  background: var(--warning);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);
+}
+
+.status-dot-danger {
+  background: var(--danger);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.45);
+}
+
+/* ---------------------------------------------------------
+   Reduced motion
+--------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   Workbook print styles
+--------------------------------------------------------- */
+
 @media print {
-  .no-print { display: none !important; }
-  body { background: white; color: black; }
-  .print-page { page-break-after: always; }
+  @page {
+    margin: 0.6in;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .print-page {
+    page-break-after: always;
+  }
+
+  .print-page:last-child {
+    page-break-after: auto;
+  }
+
+  .print-break {
+    break-before: page;
+  }
+
+  .no-break {
+    break-inside: avoid;
+  }
 }

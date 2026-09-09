@@ -12,17 +12,19 @@ type Props = {
 };
 
 const variants = {
-  primary: "bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-500/50",
-  secondary: "bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700",
-  ghost: "bg-transparent hover:bg-slate-800 text-slate-300 border border-slate-700",
-  danger: "bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-500/30",
-  success: "bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30",
+  primary: "bg-amber hover:bg-amber/90 text-ink-950 border border-amber",
+  secondary: "bg-ink-800 hover:bg-ink-700 text-parchment border border-rule",
+  ghost: "bg-transparent hover:bg-ink-800 text-parchment-dim border border-rule",
+  danger: "bg-brick-dim hover:bg-brick-dim/80 text-brick border border-brick/30",
+  success: "bg-teal-dim hover:bg-teal-dim/80 text-teal border border-teal/30",
 };
 
+// min-height keeps every size at or above a 44px touch target on mobile,
+// even though the visual padding stays compact on desktop.
 const sizes = {
-  sm: "text-xs px-3 py-1.5 gap-1.5",
-  md: "text-sm px-4 py-2 gap-2",
-  lg: "text-sm px-5 py-2.5 gap-2",
+  sm: "text-xs px-3 py-1.5 gap-1.5 min-h-[36px]",
+  md: "text-sm px-4 py-2 gap-2 min-h-[40px]",
+  lg: "text-sm px-5 py-2.5 gap-2 min-h-[44px]",
 };
 
 export default function Button({
@@ -41,7 +43,7 @@ export default function Button({
       onClick={onClick}
       disabled={disabled || loading}
       className={cn(
-        "inline-flex items-center justify-center rounded-lg font-medium transition-all",
+        "inline-flex items-center justify-center rounded-[3px] font-medium transition-colors",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         variants[variant],
         sizes[size],

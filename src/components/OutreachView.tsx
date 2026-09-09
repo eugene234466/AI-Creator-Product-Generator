@@ -66,7 +66,7 @@ function DraftCard({ draft }: { draft: OutreachDraft }) {
     <Card className="space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Icon size={14} className="text-slate-400" />
+          <Icon size={14} className="text-parchment-dim" />
           <Badge variant={badge}>{label}</Badge>
           <Badge variant={toneBadgeVariant}>{draft.tone}</Badge>
         </div>
@@ -77,17 +77,17 @@ function DraftCard({ draft }: { draft: OutreachDraft }) {
       </div>
 
       {draft.subject && (
-        <div className="p-2 rounded bg-slate-900/50 border border-slate-800">
-          <p className="text-xs text-slate-500 mb-0.5">Subject line</p>
-          <p className="text-sm font-medium text-slate-200">{draft.subject}</p>
+        <div className="p-2 rounded-[3px] bg-ink-950 border border-rule">
+          <p className="text-xs text-parchment-faint mb-0.5">Subject line</p>
+          <p className="text-sm font-medium text-parchment">{draft.subject}</p>
         </div>
       )}
 
-      <div className="p-3 rounded-lg bg-slate-900/50 border border-slate-800">
-        <p className="text-sm text-slate-300 whitespace-pre-line leading-relaxed">{draft.message}</p>
+      <div className="p-3 rounded-[3px] bg-ink-950 border border-rule">
+        <p className="text-sm text-parchment-dim whitespace-pre-line leading-relaxed">{draft.message}</p>
       </div>
 
-      <p className="text-xs text-slate-600 italic">
+      <p className="text-xs text-parchment-faint italic">
         ⚠ Draft only — review before sending. Do not send automatically.
       </p>
     </Card>
@@ -113,9 +113,9 @@ export default function OutreachView({ drafts, loading, onGenerate, creatorName 
   if (drafts.length === 0) {
     return (
       <Card className="text-center py-12">
-        <MessageSquare size={32} className="text-indigo-400 mx-auto mb-3" />
-        <p className="text-slate-300 font-medium">Partnership Outreach Drafts</p>
-        <p className="text-sm text-slate-500 mt-1 mb-4">
+        <MessageSquare size={32} className="text-amber mx-auto mb-3" />
+        <p className="text-parchment-dim font-medium">Partnership Outreach Drafts</p>
+        <p className="text-sm text-parchment-faint mt-1 mb-4">
           Generate 2–3 personalized outreach messages for {creatorName}.<br />
           These are drafts for human review only — not sent automatically.
         </p>
@@ -129,18 +129,18 @@ export default function OutreachView({ drafts, loading, onGenerate, creatorName 
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-semibold text-slate-100">Outreach Drafts</h2>
-          <p className="text-sm text-slate-400 mt-0.5">{creatorName} · {drafts.length} draft{drafts.length !== 1 ? "s" : ""}</p>
+          <h2 className="text-xl font-display font-medium text-parchment">Outreach Drafts</h2>
+          <p className="text-sm text-parchment-dim mt-0.5">{creatorName} · {drafts.length} draft{drafts.length !== 1 ? "s" : ""}</p>
         </div>
         <Button variant="secondary" size="sm" onClick={onGenerate} loading={loading}>
           Regenerate
         </Button>
       </div>
 
-      <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-        <p className="text-xs text-red-300">
+      <div className="p-3 rounded-[3px] bg-brick-dim border border-brick/20">
+        <p className="text-xs text-brick">
           🚫 <strong>Do not send these automatically.</strong> These are drafts for your review only.
           Personalize further before sending. Review all claims for accuracy.
         </p>

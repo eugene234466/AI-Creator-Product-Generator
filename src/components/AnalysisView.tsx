@@ -40,7 +40,7 @@ function TagList({ items, variant = "slate" }: { items: string[]; variant?: "blu
       {items.map((item, i) => (
         <Badge key={i} variant={variant}>{item}</Badge>
       ))}
-      {items.length === 0 && <span className="text-xs text-slate-600 italic">None identified</span>}
+      {items.length === 0 && <span className="text-xs text-parchment-faint italic">None identified</span>}
     </div>
   );
 }
@@ -54,10 +54,10 @@ function Section({ title, children, icon: Icon }: { title: string; children: Rea
         className="w-full flex items-center justify-between text-left"
       >
         <div className="flex items-center gap-2">
-          {Icon && <Icon size={14} className="text-indigo-400" />}
-          <h3 className="text-sm font-semibold text-slate-200">{title}</h3>
+          {Icon && <Icon size={14} className="text-amber" />}
+          <h3 className="text-sm font-display font-medium text-parchment">{title}</h3>
         </div>
-        {open ? <ChevronUp size={14} className="text-slate-500" /> : <ChevronDown size={14} className="text-slate-500" />}
+        {open ? <ChevronUp size={14} className="text-parchment-faint" /> : <ChevronDown size={14} className="text-parchment-faint" />}
       </button>
       {open && children}
     </Card>
@@ -67,10 +67,10 @@ function Section({ title, children, icon: Icon }: { title: string; children: Rea
 export default function AnalysisView({ creator, analysis, onAnalyze, onContinue, loading }: Props) {
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-semibold text-slate-100">Content Analysis</h2>
-          <p className="text-sm text-slate-400 mt-0.5">{creator.name} · {creator.niche}</p>
+          <h2 className="text-xl font-display font-medium text-parchment">Content Analysis</h2>
+          <p className="text-sm text-parchment-dim mt-0.5">{creator.name} · {creator.niche}</p>
         </div>
         {!analysis && !loading && (
           <Button onClick={onAnalyze} loading={loading}>
@@ -100,9 +100,9 @@ export default function AnalysisView({ creator, analysis, onAnalyze, onContinue,
 
       {!loading && !analysis && (
         <Card className="text-center py-12">
-          <Brain size={32} className="text-indigo-400 mx-auto mb-3" />
-          <p className="text-slate-300 font-medium">Ready to analyze</p>
-          <p className="text-sm text-slate-500 mt-1">
+          <Brain size={32} className="text-amber mx-auto mb-3" />
+          <p className="text-parchment-dim font-medium">Ready to analyze</p>
+          <p className="text-sm text-parchment-faint mt-1">
             Click &quot;Run Analysis&quot; to identify audience problems, content themes, and monetization signals.
           </p>
         </Card>
@@ -111,11 +111,11 @@ export default function AnalysisView({ creator, analysis, onAnalyze, onContinue,
       {analysis && !loading && (
         <div className="space-y-4">
           {/* Main niche */}
-          <div className="flex items-center gap-3 p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+          <div className="flex flex-wrap items-center gap-3 p-4 rounded-[3px] bg-amber-dim border border-amber/20">
             <div className="text-2xl">🎯</div>
             <div>
-              <p className="text-xs text-indigo-400 font-medium uppercase tracking-wide">Main Niche</p>
-              <p className="text-slate-100 font-semibold">{analysis.mainNiche}</p>
+              <p className="text-xs text-amber font-medium">Main niche</p>
+              <p className="text-parchment font-semibold">{analysis.mainNiche}</p>
             </div>
             <div className="ml-auto flex flex-wrap gap-1.5">
               {analysis.subNiches.map((s, i) => (
@@ -125,35 +125,35 @@ export default function AnalysisView({ creator, analysis, onAnalyze, onContinue,
           </div>
 
           {/* Critical separator */}
-          <div className="grid grid-cols-2 gap-4">
-            <Card className="border-blue-500/20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Card className="border-teal/20">
               <div className="flex items-center gap-2 mb-3">
-                <TrendingUp size={14} className="text-blue-400" />
-                <h3 className="text-sm font-semibold text-blue-300">Content Popularity</h3>
+                <TrendingUp size={14} className="text-teal" />
+                <h3 className="text-sm font-semibold text-teal">Content Popularity</h3>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">{analysis.contentPopularityNotes}</p>
+              <p className="text-xs text-parchment-dim leading-relaxed">{analysis.contentPopularityNotes}</p>
             </Card>
-            <Card className="border-emerald-500/20">
+            <Card className="border-amber/20">
               <div className="flex items-center gap-2 mb-3">
-                <DollarSign size={14} className="text-emerald-400" />
-                <h3 className="text-sm font-semibold text-emerald-300">Monetization Potential</h3>
+                <DollarSign size={14} className="text-amber" />
+                <h3 className="text-sm font-semibold text-amber">Monetization Potential</h3>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">{analysis.monetizationPotentialNotes}</p>
+              <p className="text-xs text-parchment-dim leading-relaxed">{analysis.monetizationPotentialNotes}</p>
             </Card>
           </div>
 
           <Section title="Content Themes & Topics" icon={Brain}>
             <div className="space-y-3">
               <div>
-                <p className="text-xs text-slate-500 mb-1.5">Recurring Topics</p>
+                <p className="text-xs text-parchment-faint mb-1.5">Recurring Topics</p>
                 <TagList items={analysis.recurringTopics} variant="slate" />
               </div>
               <div>
-                <p className="text-xs text-slate-500 mb-1.5">Content Themes</p>
+                <p className="text-xs text-parchment-faint mb-1.5">Content Themes</p>
                 <TagList items={analysis.contentThemes} variant="indigo" />
               </div>
               <div>
-                <p className="text-xs text-emerald-500 mb-1.5">🔥 Promising Topics (Monetization Lens)</p>
+                <p className="text-xs text-amber mb-1.5">🔥 Promising Topics (Monetization Lens)</p>
                 <TagList items={analysis.promisingTopics} variant="emerald" />
               </div>
             </div>
@@ -162,29 +162,29 @@ export default function AnalysisView({ creator, analysis, onAnalyze, onContinue,
           <Section title="Audience Intelligence" icon={Brain}>
             <div className="space-y-3">
               <div>
-                <p className="text-xs text-slate-500 mb-1.5">Audience Problems</p>
+                <p className="text-xs text-parchment-faint mb-1.5">Audience Problems</p>
                 <div className="space-y-1.5">
                   {analysis.audienceProblems.map((p, i) => (
-                    <div key={i} className="flex items-start gap-2 text-xs text-slate-300">
-                      <span className="text-red-400 mt-0.5">•</span>
+                    <div key={i} className="flex items-start gap-2 text-xs text-parchment-dim">
+                      <span className="text-brick mt-0.5">•</span>
                       {p}
                     </div>
                   ))}
                 </div>
               </div>
               <div>
-                <p className="text-xs text-slate-500 mb-1.5">Audience Desires</p>
+                <p className="text-xs text-parchment-faint mb-1.5">Audience Desires</p>
                 <div className="space-y-1.5">
                   {analysis.audienceDesires.map((d, i) => (
-                    <div key={i} className="flex items-start gap-2 text-xs text-slate-300">
-                      <span className="text-emerald-400 mt-0.5">•</span>
+                    <div key={i} className="flex items-start gap-2 text-xs text-parchment-dim">
+                      <span className="text-teal mt-0.5">•</span>
                       {d}
                     </div>
                   ))}
                 </div>
               </div>
               <div>
-                <p className="text-xs text-slate-500 mb-1.5">Repeated Questions</p>
+                <p className="text-xs text-parchment-faint mb-1.5">Repeated Questions</p>
                 <TagList items={analysis.repeatedQuestions} variant="purple" />
               </div>
             </div>
@@ -193,13 +193,13 @@ export default function AnalysisView({ creator, analysis, onAnalyze, onContinue,
           <Section title="Buying Intent Signals" icon={DollarSign}>
             <div className="space-y-1.5">
               {analysis.buyingIntentSignals.map((s, i) => (
-                <div key={i} className="flex items-start gap-2 text-xs text-slate-300">
-                  <span className="text-amber-400 mt-0.5">💰</span>
+                <div key={i} className="flex items-start gap-2 text-xs text-parchment-dim">
+                  <span className="text-amber mt-0.5">💰</span>
                   {s}
                 </div>
               ))}
               {analysis.buyingIntentSignals.length === 0 && (
-                <p className="text-xs text-slate-600 italic">No strong buying intent signals detected</p>
+                <p className="text-xs text-parchment-faint italic">No strong buying intent signals detected</p>
               )}
             </div>
           </Section>
@@ -207,8 +207,8 @@ export default function AnalysisView({ creator, analysis, onAnalyze, onContinue,
           <Section title="Gaps in Existing Solutions" icon={AlertTriangle}>
             <div className="space-y-1.5">
               {analysis.gapsInSolutions.map((g, i) => (
-                <div key={i} className="flex items-start gap-2 text-xs text-slate-300">
-                  <span className="text-indigo-400 mt-0.5">→</span>
+                <div key={i} className="flex items-start gap-2 text-xs text-parchment-dim">
+                  <span className="text-amber mt-0.5">→</span>
                   {g}
                 </div>
               ))}
@@ -217,13 +217,13 @@ export default function AnalysisView({ creator, analysis, onAnalyze, onContinue,
 
           {/* Evidence sources */}
           <Card>
-            <h3 className="text-sm font-semibold text-slate-300 mb-3">Evidence Sources</h3>
-            <p className="text-xs text-slate-500 mb-3">
+            <h3 className="text-sm font-semibold text-parchment mb-3">Evidence Sources</h3>
+            <p className="text-xs text-parchment-faint mb-3">
               These labels indicate the evidence basis for each finding:
             </p>
             <div className="flex flex-wrap gap-2 mb-4">
               {(["creator_post", "audience_comment", "ai_inference", "external_research"] as const).map((type) => (
-                <span key={type} className={`text-xs px-2 py-1 rounded border ${sourceTypeBadge(type)}`}>
+                <span key={type} className={`text-xs px-2 py-1 rounded-[3px] border ${sourceTypeBadge(type)}`}>
                   {sourceTypeLabel(type)}
                 </span>
               ))}
@@ -231,10 +231,10 @@ export default function AnalysisView({ creator, analysis, onAnalyze, onContinue,
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {analysis.sources?.map((s, i) => (
                 <div key={i} className="flex items-start gap-2">
-                  <span className={`text-xs px-1.5 py-0.5 rounded border flex-shrink-0 ${sourceTypeBadge(s.type)}`}>
+                  <span className={`text-xs px-1.5 py-0.5 rounded-[3px] border flex-shrink-0 ${sourceTypeBadge(s.type)}`}>
                     {sourceTypeLabel(s.type)}
                   </span>
-                  <span className="text-xs text-slate-400">{s.label}</span>
+                  <span className="text-xs text-parchment-dim">{s.label}</span>
                 </div>
               ))}
             </div>

@@ -37,6 +37,7 @@ EVIDENCE AND CLAIM INTEGRITY RULES:
    business relationships.
 
 4. Distinguish between:
+
    VERIFIED:
    Directly supported by supplied evidence.
 
@@ -337,7 +338,6 @@ Analyze the creator using the supplied creator information and
 external evidence.
 
 Identify:
-
 1. Main niche.
 2. Sub-niches.
 3. Recurring topics.
@@ -357,7 +357,6 @@ an inference rather than a fact.
 Do not fabricate comments, requests, testimonials, or demand.
 
 Return JSON:
-
 {
   "summary": "...",
   "mainNiche": "...",
@@ -464,7 +463,6 @@ The score represents opportunity quality, not guaranteed business
 performance.
 
 Return JSON:
-
 {
   "opportunities": [
     {
@@ -574,7 +572,6 @@ Instead, position it around:
 The unique angle must describe a genuine product differentiation.
 
 Return JSON:
-
 {
   "productName": "...",
   "type": "...",
@@ -664,7 +661,6 @@ You are an expert educational product designer.
 Create a practical workbook for the proposed digital product.
 
 The workbook should contain:
-
 - clear lessons
 - practical exercises
 - useful templates
@@ -686,7 +682,6 @@ If the creator's name is included, it must be treated as a proposed
 branding/collaboration concept rather than an approved product.
 
 Return JSON:
-
 {
   "title": "...",
   "subtitle": "...",
@@ -770,7 +765,6 @@ future collaboration or licensed branding opportunity.
 The branding should remain valid even without creator participation.
 
 Return JSON:
-
 {
   "tone": "...",
   "audienceLevel": "...",
@@ -832,7 +826,6 @@ Adapt the workbook to the supplied branding brief.
 Maintain factual integrity.
 
 Do NOT add:
-
 - creator endorsements
 - invented creator quotes
 - invented creator experiences
@@ -899,7 +892,6 @@ Generate:
 The drafts must use genuinely different strategies.
 
 Possible strategies:
-
 1. Audience-problem angle
 2. Research/prototype-first angle
 3. Collaboration/revenue-share angle
@@ -924,7 +916,6 @@ The outreach should sound confident without pretending that a
 relationship already exists.
 
 Return JSON:
-
 {
   "drafts": [
     {

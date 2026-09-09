@@ -81,7 +81,7 @@ type Props = {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="space-y-2">
-      <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">{title}</h3>
+      <h3 className="text-xs font-semibold text-parchment-faint">{title}</h3>
       {children}
     </div>
   );
@@ -136,10 +136,10 @@ export default function ReportView({ creatorId, creatorName }: Props) {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-semibold text-slate-100">Opportunity Report</h2>
-          <p className="text-sm text-slate-400 mt-0.5">{creatorName}</p>
+          <h2 className="text-xl font-display font-medium text-parchment">Opportunity Report</h2>
+          <p className="text-sm text-parchment-dim mt-0.5">{creatorName}</p>
         </div>
         <div className="flex gap-2">
           <Button onClick={fetchReport} loading={loading} variant="secondary">
@@ -149,13 +149,13 @@ export default function ReportView({ creatorId, creatorName }: Props) {
         </div>
       </div>
 
-      {error && <p className="text-sm text-red-400">⚠ {error}</p>}
+      {error && <p className="text-sm text-brick">⚠ {error}</p>}
 
       {!report && !loading && (
         <Card className="text-center py-12">
-          <FileDown size={32} className="text-slate-500 mx-auto mb-3" />
-          <p className="text-slate-300 font-medium">Opportunity Report</p>
-          <p className="text-sm text-slate-500 mt-1 mb-4">
+          <FileDown size={32} className="text-parchment-faint mx-auto mb-3" />
+          <p className="text-parchment-dim font-medium">Opportunity Report</p>
+          <p className="text-sm text-parchment-faint mt-1 mb-4">
             Compiles all analysis, opportunities, product recommendation, workbook outline, and outreach drafts into one report.
           </p>
           <Button onClick={fetchReport} loading={loading}>
@@ -182,24 +182,24 @@ export default function ReportView({ creatorId, creatorName }: Props) {
           {/* Creator */}
           <Section title="Creator">
             <Card>
-              <div className="flex items-start justify-between">
+              <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h3 className="font-bold text-slate-100">{report.creator.name}</h3>
-                  <p className="text-sm text-slate-400">{report.niche}</p>
+                  <h3 className="font-semibold text-parchment">{report.creator.name}</h3>
+                  <p className="text-sm text-parchment-dim">{report.niche}</p>
                   {report.subNiches.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-2">
-                      {report.subNiches.map((n, i) => <Badge key={i} variant="indigo">{n}</Badge>)}
+                      {report.subNiches.map((n, i) => <Badge key={i} variant="slate">{n}</Badge>)}
                     </div>
                   )}
                 </div>
-                <div className="text-right text-xs text-slate-500">
+                <div className="text-right text-xs text-parchment-faint">
                   {report.creator.urls.map((url, i) => (
                     <div key={i}>{url}</div>
                   ))}
                 </div>
               </div>
               {report.audience !== "Not specified" && (
-                <p className="text-xs text-slate-400 mt-3 pt-3 border-t border-slate-800">{report.audience}</p>
+                <p className="text-xs text-parchment-dim mt-3 pt-3 border-t border-rule">{report.audience}</p>
               )}
             </Card>
           </Section>
@@ -220,8 +220,8 @@ export default function ReportView({ creatorId, creatorName }: Props) {
             <Card>
               <div className="space-y-1.5">
                 {report.audienceProblems.map((p, i) => (
-                  <div key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                    <span className="text-red-400">•</span>
+                  <div key={i} className="flex items-start gap-2 text-sm text-parchment-dim">
+                    <span className="text-brick">•</span>
                     {p}
                   </div>
                 ))}
@@ -234,13 +234,13 @@ export default function ReportView({ creatorId, creatorName }: Props) {
             <Card>
               <div className="space-y-1.5">
                 {report.buyingIntentSignals.map((s, i) => (
-                  <div key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                    <span className="text-amber-400">💰</span>
+                  <div key={i} className="flex items-start gap-2 text-sm text-parchment-dim">
+                    <span className="text-amber">💰</span>
                     {s}
                   </div>
                 ))}
                 {report.buyingIntentSignals.length === 0 && (
-                  <p className="text-sm text-slate-600 italic">No clear signals detected</p>
+                  <p className="text-sm text-parchment-faint italic">No clear signals detected</p>
                 )}
               </div>
             </Card>
@@ -250,15 +250,15 @@ export default function ReportView({ creatorId, creatorName }: Props) {
           <Section title="Opportunities">
             <div className="space-y-2">
               {report.opportunities.map((opp) => (
-                <Card key={opp.id} className={opp.isSelected === 1 ? "border-indigo-500/30" : ""}>
-                  <div className="flex items-center justify-between">
+                <Card key={opp.id} className={opp.isSelected === 1 ? "border-teal/30" : ""}>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-medium text-slate-200">{opp.productIdea}</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-sm font-medium text-parchment">{opp.productIdea}</p>
                         {opp.isSelected === 1 && <Badge variant="emerald">Selected</Badge>}
-                        {opp.suggestedFormat && <Badge variant="indigo">{opp.suggestedFormat}</Badge>}
+                        {opp.suggestedFormat && <Badge variant="slate">{opp.suggestedFormat}</Badge>}
                       </div>
-                      <p className="text-xs text-slate-500 mt-0.5">
+                      <p className="text-xs text-parchment-faint mt-0.5">
                         ${opp.priceRangeLow}–${opp.priceRangeHigh} · {opp.difficulty}
                       </p>
                     </div>
@@ -276,16 +276,16 @@ export default function ReportView({ creatorId, creatorName }: Props) {
           {report.recommendedProduct && (
             <Section title="Recommended Product">
               <Card glow>
-                <div className="flex justify-between items-start">
+                <div className="flex flex-wrap justify-between items-start gap-3">
                   <div>
-                    <Badge variant="indigo">{report.recommendedProduct.productType}</Badge>
-                    <h3 className="text-lg font-bold text-slate-100 mt-1">{report.recommendedProduct.productName}</h3>
-                    <p className="text-sm text-slate-400">{report.recommendedProduct.targetCustomer}</p>
+                    <Badge variant="slate">{report.recommendedProduct.productType}</Badge>
+                    <h3 className="text-lg font-display font-medium text-parchment mt-1">{report.recommendedProduct.productName}</h3>
+                    <p className="text-sm text-parchment-dim">{report.recommendedProduct.targetCustomer}</p>
                   </div>
-                  <p className="text-xl font-bold text-emerald-400">${report.recommendedProduct.recommendedPrice}</p>
+                  <p className="text-xl font-figures font-semibold text-teal">${report.recommendedProduct.recommendedPrice}</p>
                 </div>
                 {report.recommendedProduct.transformation && (
-                  <p className="text-sm text-slate-300 mt-3">{report.recommendedProduct.transformation}</p>
+                  <p className="text-sm text-parchment-dim mt-3">{report.recommendedProduct.transformation}</p>
                 )}
               </Card>
             </Section>
@@ -296,16 +296,16 @@ export default function ReportView({ creatorId, creatorName }: Props) {
             <Section title="Workbook Outline">
               <Card>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-slate-200">{report.workbook.title}</h3>
+                  <h3 className="font-semibold text-parchment">{report.workbook.title}</h3>
                   {report.workbook.isBranded === 1 && <Badge variant="purple">Branded</Badge>}
                 </div>
                 {report.workbook.subtitle && (
-                  <p className="text-xs text-slate-400 mb-3">{report.workbook.subtitle}</p>
+                  <p className="text-xs text-parchment-dim mb-3">{report.workbook.subtitle}</p>
                 )}
                 <div className="space-y-1">
                   {report.workbook.sectionTitles.map((title, i) => (
-                    <div key={i} className="flex items-center gap-2 text-xs text-slate-300">
-                      <span className="text-slate-600">{i + 1}.</span>
+                    <div key={i} className="flex items-center gap-2 text-xs text-parchment-dim">
+                      <span className="text-parchment-faint">{i + 1}.</span>
                       {title}
                     </div>
                   ))}
@@ -318,26 +318,26 @@ export default function ReportView({ creatorId, creatorName }: Props) {
           {report.brandingBrief && (
             <Section title="Branding Brief">
               <Card>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-xs text-slate-500">Tone</p>
-                    <p className="text-slate-300">{report.brandingBrief.tone}</p>
+                    <p className="text-xs text-parchment-faint">Tone</p>
+                    <p className="text-parchment-dim">{report.brandingBrief.tone}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500">Audience Level</p>
-                    <p className="text-slate-300">{report.brandingBrief.audienceSophistication}</p>
+                    <p className="text-xs text-parchment-faint">Audience Level</p>
+                    <p className="text-parchment-dim">{report.brandingBrief.audienceSophistication}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500">Positioning</p>
-                    <p className="text-slate-300">{report.brandingBrief.positioning}</p>
+                    <p className="text-xs text-parchment-faint">Positioning</p>
+                    <p className="text-parchment-dim">{report.brandingBrief.positioning}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500">CTA Style</p>
-                    <p className="text-slate-300">{report.brandingBrief.ctaStyle}</p>
+                    <p className="text-xs text-parchment-faint">CTA Style</p>
+                    <p className="text-parchment-dim">{report.brandingBrief.ctaStyle}</p>
                   </div>
                 </div>
                 {report.brandingBrief.disclaimer && (
-                  <p className="text-xs text-amber-400 mt-3 pt-3 border-t border-slate-800">{report.brandingBrief.disclaimer}</p>
+                  <p className="text-xs text-amber mt-3 pt-3 border-t border-rule">{report.brandingBrief.disclaimer}</p>
                 )}
               </Card>
             </Section>
@@ -350,20 +350,20 @@ export default function ReportView({ creatorId, creatorName }: Props) {
                 {report.outreachDrafts.map((draft, i) => (
                   <Card key={i}>
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="blue">{draft.platform}</Badge>
+                      <Badge variant="slate">{draft.platform}</Badge>
                       <Badge variant="slate">{draft.tone}</Badge>
                     </div>
                     {draft.subject && (
-                      <p className="text-xs text-slate-500 mb-1">Subject: <span className="text-slate-300">{draft.subject}</span></p>
+                      <p className="text-xs text-parchment-faint mb-1">Subject: <span className="text-parchment-dim">{draft.subject}</span></p>
                     )}
-                    <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed">{draft.message}</p>
+                    <p className="text-xs text-parchment-dim line-clamp-3 leading-relaxed">{draft.message}</p>
                   </Card>
                 ))}
               </div>
             </Section>
           )}
 
-          <p className="text-xs text-slate-600 text-center">
+          <p className="text-xs text-parchment-faint text-center">
             Report generated {new Date(report.generatedAt).toLocaleString()}
           </p>
         </div>

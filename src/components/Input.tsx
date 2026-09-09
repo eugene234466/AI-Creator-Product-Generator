@@ -26,14 +26,14 @@ export default function Input({
   rows = 3,
 }: Props) {
   const base =
-    "w-full bg-slate-900/60 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-colors";
+    "w-full bg-ink-950 border border-rule rounded-[3px] px-3 py-2.5 text-base sm:text-sm text-parchment placeholder:text-parchment-faint focus:outline-none focus:ring-1 focus:ring-amber focus:border-amber transition-colors";
 
   return (
-    <div className={cn("space-y-1", className)}>
+    <div className={cn("space-y-1.5", className)}>
       {label && (
-        <label className="text-sm font-medium text-slate-300">
+        <label className="text-sm font-medium text-parchment-dim">
           {label}
-          {required && <span className="text-red-400 ml-1">*</span>}
+          {required && <span className="text-brick ml-1">*</span>}
         </label>
       )}
       {multiline ? (
@@ -54,7 +54,7 @@ export default function Input({
           className={base}
         />
       )}
-      {hint && <p className="text-xs text-slate-500">{hint}</p>}
+      {hint && <p className="text-xs text-parchment-faint">{hint}</p>}
     </div>
   );
 }

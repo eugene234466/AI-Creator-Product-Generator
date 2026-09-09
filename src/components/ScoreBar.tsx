@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, scoreColor } from "@/lib/utils";
 
 type Props = {
   label: string;
@@ -9,39 +9,29 @@ type Props = {
   className?: string;
 };
 
+// Maps to the same three signal colors as scoreColor/scoreBg in lib/utils,
+// so a bar and a badge for the same score always agree.
+function barColor(score: number): string {
+  if (score >= 70) return "bg-teal";
+  if (score >= 40) return "bg-amber";
+  return "bg-brick";
+}
+
 export default function ScoreBar({ label, score, explanation, className }: Props) {
-  const color =
-    score >= 75
-      ? "bg-emerald-500"
-      : score >= 55
-      ? "bg-yellow-500"
-      : score >= 35
-      ? "bg-orange-500"
-      : "bg-red-500";
-
-  const textColor =
-    score >= 75
-      ? "text-emerald-400"
-      : score >= 55
-      ? "text-yellow-400"
-      : score >= 35
-      ? "text-orange-400"
-      : "text-red-400";
-
   return (
     <div className={cn("space-y-1", className)}>
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-slate-300">{label}</span>
-        <span className={cn("text-sm font-semibold tabular-nums", textColor)}>{score}</span>
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-sm text-parchment-dim">{label}</span>
+        <span className={cn("text-sm font-figures font-semibold", scoreColor(score))}>{score}</span>
       </div>
-      <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-ink-800 rounded-full overflow-hidden">
         <div
-          className={cn("h-full rounded-full transition-all duration-700", color)}
+          className={cn("h-full rounded-full transition-all duration-700", barColor(score))}
           style={{ width: `${score}%` }}
         />
       </div>
       {explanation && (
-        <p className="text-xs text-slate-500 leading-snug">{explanation}</p>
+        <p className="text-xs text-parchment-faint leading-snug">{explanation}</p>
       )}
     </div>
   );

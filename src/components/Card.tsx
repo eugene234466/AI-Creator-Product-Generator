@@ -12,9 +12,9 @@ export default function Card({ children, className, glow, onClick }: Props) {
     <div
       onClick={onClick}
       className={cn(
-        "rounded-xl border border-slate-800 bg-[#111318] p-5",
-        glow && "ring-1 ring-indigo-500/30 shadow-lg shadow-indigo-500/5",
-        onClick && "cursor-pointer hover:border-slate-700 transition-colors",
+        "rounded-[3px] border border-rule bg-ink-900 p-4 sm:p-5",
+        glow && "ring-1 ring-amber/40",
+        onClick && "cursor-pointer hover:border-parchment-faint transition-colors",
         className
       )}
     >

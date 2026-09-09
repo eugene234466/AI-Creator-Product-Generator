@@ -71,26 +71,26 @@ export default function CreatorForm({ onCreated }: Props) {
   return (
     <div className="max-w-2xl mx-auto space-y-5">
       <div>
-        <h2 className="text-xl font-semibold text-slate-100">Add Creator</h2>
-        <p className="text-sm text-slate-400 mt-1">
+        <h2 className="text-xl font-display font-medium text-parchment">Add Creator</h2>
+        <p className="text-sm text-parchment-dim mt-1">
           Enter as much information as you have. The more context, the better the analysis.
         </p>
       </div>
 
       {/* Tab navigation */}
-      <div className="flex gap-1 bg-slate-900/60 p-1 rounded-lg border border-slate-800">
+      <div className="flex gap-1 bg-ink-900 p-1 rounded-[3px] border border-rule overflow-x-auto">
         {tabs.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
             onClick={() => setSection(key)}
-            className={`flex-1 flex items-center justify-center gap-1.5 text-xs py-2 px-3 rounded-md font-medium transition-all ${
+            className={`flex-1 flex items-center justify-center gap-1.5 text-xs py-2.5 sm:py-2 px-2 sm:px-3 rounded-[3px] font-medium whitespace-nowrap transition-colors ${
               section === key
-                ? "bg-indigo-600 text-white"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-amber text-ink-950"
+                : "text-parchment-dim hover:text-parchment"
             }`}
           >
             <Icon size={13} />
-            {label}
+            <span className="hidden xs:inline sm:inline">{label}</span>
           </button>
         ))}
       </div>
@@ -127,8 +127,8 @@ export default function CreatorForm({ onCreated }: Props) {
         {section === "urls" && (
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-              <p className="text-xs text-slate-400">
+              <div className="w-1.5 h-1.5 rounded-full bg-amber flex-shrink-0" />
+              <p className="text-xs text-parchment-dim">
                 URLs are for reference context only. The AI will not scrape these pages.
               </p>
             </div>
@@ -158,9 +158,9 @@ export default function CreatorForm({ onCreated }: Props) {
 
         {section === "content" && (
           <div className="space-y-4">
-            <div className="flex items-start gap-2 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-              <FileText size={14} className="text-blue-400 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-blue-300">
+            <div className="flex items-start gap-2 p-3 rounded-[3px] bg-teal-dim border border-teal/20">
+              <FileText size={14} className="text-teal mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-teal">
                 Paste actual posts, captions, video descriptions, or comments here. This is the most valuable input for analysis.
               </p>
             </div>
@@ -187,12 +187,12 @@ export default function CreatorForm({ onCreated }: Props) {
       </Card>
 
       {error && (
-        <p className="text-sm text-red-400 flex items-center gap-2">
+        <p className="text-sm text-brick flex items-center gap-2">
           <span>⚠</span> {error}
         </p>
       )}
 
-      <div className="flex justify-between">
+      <div className="flex flex-wrap gap-3 justify-between">
         <div className="flex gap-2">
           {section !== "basic" && (
             <Button

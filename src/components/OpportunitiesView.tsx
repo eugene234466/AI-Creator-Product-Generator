@@ -67,10 +67,10 @@ export default function OpportunitiesView({
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-semibold text-slate-100">Product Opportunities</h2>
-          <p className="text-sm text-slate-400 mt-0.5">{creator.name} · {opportunities.length} opportunity{opportunities.length !== 1 ? "s" : ""} found</p>
+          <h2 className="text-xl font-display font-medium text-parchment">Product Opportunities</h2>
+          <p className="text-sm text-parchment-dim mt-0.5">{creator.name} · {opportunities.length} opportunity{opportunities.length !== 1 ? "s" : ""} found</p>
         </div>
         <div className="flex gap-2">
           {opportunities.length > 0 && (
@@ -102,9 +102,9 @@ export default function OpportunitiesView({
 
       {!loading && opportunities.length === 0 && (
         <Card className="text-center py-12">
-          <Lightbulb size={32} className="text-indigo-400 mx-auto mb-3" />
-          <p className="text-slate-300 font-medium">No opportunities yet</p>
-          <p className="text-sm text-slate-500 mt-1">
+          <Lightbulb size={32} className="text-amber mx-auto mb-3" />
+          <p className="text-parchment-dim font-medium">No opportunities yet</p>
+          <p className="text-sm text-parchment-faint mt-1">
             Click &quot;Discover Opportunities&quot; to generate 3–5 product ideas from the analysis.
           </p>
         </Card>
@@ -112,9 +112,9 @@ export default function OpportunitiesView({
 
       {!loading && sorted.length > 0 && (
         <div className="space-y-4">
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
-            <span className="text-amber-400 text-sm">⚡</span>
-            <p className="text-xs text-amber-300">
+          <div className="flex items-start sm:items-center gap-2 p-3 rounded-[3px] bg-amber-dim border border-amber/20">
+            <span className="text-amber text-sm flex-shrink-0">⚡</span>
+            <p className="text-xs text-amber">
               Select an opportunity to generate a full product recommendation and workbook.
               The &quot;Creator Fit&quot; score measures how naturally the creator could promote this product — separate from overall quality.
             </p>

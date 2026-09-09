@@ -45,9 +45,9 @@ export default function BrandingView({ brandingBrief: brief, loading, onGenerate
   if (!brief) {
     return (
       <Card className="text-center py-12">
-        <Palette size={32} className="text-purple-400 mx-auto mb-3" />
-        <p className="text-slate-300 font-medium">Branding Brief</p>
-        <p className="text-sm text-slate-500 mt-1 mb-4">
+        <Palette size={32} className="text-amber mx-auto mb-3" />
+        <p className="text-parchment-dim font-medium">Branding Brief</p>
+        <p className="text-sm text-parchment-faint mt-1 mb-4">
           Generate a branding brief to adapt the workbook&apos;s tone and positioning for {creatorName}&apos;s audience.
         </p>
         <Button onClick={onGenerate}>
@@ -61,31 +61,31 @@ export default function BrandingView({ brandingBrief: brief, loading, onGenerate
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-xl font-semibold text-slate-100">Creator Branding Brief</h2>
-        <p className="text-sm text-slate-400 mt-0.5">{creatorName}</p>
+        <h2 className="text-xl font-display font-medium text-parchment">Creator Branding Brief</h2>
+        <p className="text-sm text-parchment-dim mt-0.5">{creatorName}</p>
       </div>
 
       {/* Disclaimer */}
-      <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
-        <AlertCircle size={14} className="text-amber-400 mt-0.5 flex-shrink-0" />
-        <p className="text-xs text-amber-300 leading-relaxed">{brief.disclaimer}</p>
+      <div className="flex items-start gap-3 p-4 rounded-[3px] bg-amber-dim border border-amber/20">
+        <AlertCircle size={14} className="text-amber mt-0.5 flex-shrink-0" />
+        <p className="text-xs text-amber leading-relaxed">{brief.disclaimer}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Tone */}
         <Card>
           <div className="flex items-center gap-2 mb-3">
-            <MessageSquare size={13} className="text-blue-400" />
-            <h3 className="text-sm font-semibold text-slate-200">Tone</h3>
+            <MessageSquare size={13} className="text-amber" />
+            <h3 className="text-sm font-semibold text-parchment">Tone</h3>
           </div>
-          <p className="text-sm text-slate-300">{brief.tone}</p>
+          <p className="text-sm text-parchment-dim">{brief.tone}</p>
         </Card>
 
         {/* Audience sophistication */}
         <Card>
           <div className="flex items-center gap-2 mb-3">
-            <Target size={13} className="text-emerald-400" />
-            <h3 className="text-sm font-semibold text-slate-200">Audience Sophistication</h3>
+            <Target size={13} className="text-amber" />
+            <h3 className="text-sm font-semibold text-parchment">Audience Sophistication</h3>
           </div>
           <Badge variant={
             brief.audienceSophistication === "advanced" ? "emerald" :
@@ -94,14 +94,14 @@ export default function BrandingView({ brandingBrief: brief, loading, onGenerate
           }>
             {brief.audienceSophistication}
           </Badge>
-          <p className="text-xs text-slate-400 mt-2">{brief.contentStyle}</p>
+          <p className="text-xs text-parchment-dim mt-2">{brief.contentStyle}</p>
         </Card>
 
         {/* Vocabulary */}
         <Card>
           <div className="flex items-center gap-2 mb-3">
-            <Type size={13} className="text-purple-400" />
-            <h3 className="text-sm font-semibold text-slate-200">Vocabulary Tendencies</h3>
+            <Type size={13} className="text-amber" />
+            <h3 className="text-sm font-semibold text-parchment">Vocabulary Tendencies</h3>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {brief.vocabularyTendencies.map((v, i) => (
@@ -113,44 +113,44 @@ export default function BrandingView({ brandingBrief: brief, loading, onGenerate
         {/* Visual direction */}
         <Card>
           <div className="flex items-center gap-2 mb-3">
-            <Eye size={13} className="text-amber-400" />
-            <h3 className="text-sm font-semibold text-slate-200">Visual Direction</h3>
+            <Eye size={13} className="text-amber" />
+            <h3 className="text-sm font-semibold text-parchment">Visual Direction</h3>
           </div>
-          <p className="text-sm text-slate-300">{brief.visualDirection}</p>
+          <p className="text-sm text-parchment-dim">{brief.visualDirection}</p>
         </Card>
       </div>
 
       {/* Positioning */}
-      <Card className="border-indigo-500/20">
+      <Card className="border-amber/20">
         <div className="flex items-center gap-2 mb-3">
-          <Target size={13} className="text-indigo-400" />
-          <h3 className="text-sm font-semibold text-slate-200">Positioning</h3>
+          <Target size={13} className="text-amber" />
+          <h3 className="text-sm font-semibold text-parchment">Positioning</h3>
         </div>
-        <p className="text-sm text-slate-300 leading-relaxed">{brief.positioning}</p>
+        <p className="text-sm text-parchment-dim leading-relaxed">{brief.positioning}</p>
       </Card>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Naming style */}
         <Card>
-          <h3 className="text-sm font-semibold text-slate-200 mb-2">Product Naming Style</h3>
-          <p className="text-sm text-slate-300">{brief.productNamingStyle}</p>
+          <h3 className="text-sm font-semibold text-parchment mb-2">Product Naming Style</h3>
+          <p className="text-sm text-parchment-dim">{brief.productNamingStyle}</p>
         </Card>
 
         {/* CTA style */}
         <Card>
-          <h3 className="text-sm font-semibold text-slate-200 mb-2">CTA Style</h3>
-          <p className="text-sm text-slate-300">{brief.ctaStyle}</p>
+          <h3 className="text-sm font-semibold text-parchment mb-2">CTA Style</h3>
+          <p className="text-sm text-parchment-dim">{brief.ctaStyle}</p>
         </Card>
       </div>
 
       {/* Audience examples */}
       {brief.audienceExamples && brief.audienceExamples.length > 0 && (
         <Card>
-          <h3 className="text-sm font-semibold text-slate-200 mb-3">Example Phrases for This Audience</h3>
+          <h3 className="text-sm font-semibold text-parchment mb-3">Example Phrases for This Audience</h3>
           <div className="space-y-2">
             {brief.audienceExamples.map((ex, i) => (
-              <div key={i} className="flex items-start gap-2 text-xs text-slate-300">
-                <span className="text-indigo-400 mt-0.5">→</span>
+              <div key={i} className="flex items-start gap-2 text-xs text-parchment-dim">
+                <span className="text-amber mt-0.5">→</span>
                 &ldquo;{ex}&rdquo;
               </div>
             ))}
